@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Converted quality tool (C binary, keep only source)
+quality
+*.o
+quality.orig*
