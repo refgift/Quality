@@ -272,9 +272,9 @@ static Metrics compute_metrics(const char* content, const char* fname) {
 
     double qtemp = 92.0 - (entropy * 0.55);
     if (qtemp > 100.0) qtemp = 100.0;
-    if (qtemp < 0.0) qtemp = 0.0;
+  //  if (qtemp < 0.0) qtemp = 0.0;
     if (m.comment_ratio < 8.0) qtemp -= 8.0;
-    if (qtemp < 0.0) qtemp = 0.0;
+  //  if (qtemp < 0.0) qtemp = 0.0;
 
     /* use display_round so that printed values and derived avg match the digit choices of python version */
     m.comment_ratio = display_round(m.comment_ratio);
@@ -308,6 +308,10 @@ static void print_report(const Metrics* m) {
     putchar('\n');
     printf("  Tip: Run this regularly on AI-generated code to track if\n");
     printf("       temperature is rising (improving) or falling over time.\n\n");
+}
+
+static void print_summary_report(const Metrics* m) {
+	printf("%s %.2f\n",m->filename, m->quality_temp_f);
 }
 
 static bool has_supported_ext(const char* path) {
@@ -351,7 +355,7 @@ static void process_path(const char* path, double* sum, int* nfiles, bool* any) 
             if (content) {
                 Metrics m = compute_metrics(content, path);
                 free(content);
-                print_report(&m);
+                print_summary_report(&m);
                 if (sum) *sum += m.quality_temp_f;
                 if (nfiles) ++(*nfiles);
                 if (any) *any = true;
@@ -378,7 +382,7 @@ int main(int argc, char** argv) {
         }
         Metrics m = compute_metrics(content, "stdin");
         free(content);
-        print_report(&m);
+        print_summary_report(&m);
         return 0;
     }
 
@@ -406,7 +410,7 @@ int main(int argc, char** argv) {
         }
         Metrics m = compute_metrics(content, target);
         free(content);
-        print_report(&m);
+        print_summary_report(&m);
     }
 
     return 0;
