@@ -104,10 +104,11 @@ static const char* get_interpretation(double temp) {
     if (temp >= 90) return " Excellent  clean, maintainable, low entropy";
     else if (temp >= 80) return " Good  solid code with minor room for improvement";
     else if (temp >= 70) return " Acceptable  functional but watch complexity/duplication";
-    else if (temp >= 60) return " Lukewarm  typical first-pass AI code; needs review";
+    else if (temp >= 60) return " Lukewarm  typical AI code; needs review";
     else if (temp >= 50) return " Cool  noticeable entropy; refactoring recommended";
-    else if (temp >= 40) return " Cold  high disorder; significant technical debt";
-    else return " Frozen  unmaintainable; high risk";
+    else if (temp >= 40) return " Very cool  high disorder; significant technical debt";
+    else if (temp >= 32) return " Cold  on the rocks";
+    else return " Frozen; functional but difficult";
 }
 
 static char* read_file(const char* path) {
