@@ -25,6 +25,7 @@
 #include <math.h>
 #include <errno.h>
 #include <strings.h>
+#include "cfm.h"
 
 #define MAX_PATH 512
 #define MAX_DUP_CAND 16384
@@ -40,7 +41,7 @@ typedef struct {
     int complexity_score;
     int duplicate_lines;
     double entropy_raw;
-    char interpretation[80];
+    char interpretation[200];
 } Metrics;
 
 static const char* COMPLEXITY_KWS[] = {
@@ -101,14 +102,9 @@ static double display_round(double v) {
 }
 
 static const char* get_interpretation(double temp) {
-    if (temp >= 90) return " Excellent  clean, maintainable, low entropy";
-    else if (temp >= 80) return " Good  solid code with minor room for improvement";
-    else if (temp >= 70) return " Acceptable  functional but watch complexity/duplication";
-    else if (temp >= 60) return " Lukewarm  typical AI code; needs review";
-    else if (temp >= 50) return " Cool  noticeable entropy; refactoring recommended";
-    else if (temp >= 40) return " Very cool  high disorder; significant technical debt";
-    else if (temp >= 32) return " Cold  on the rocks";
-    else return " Frozen; functional but difficult";
+	int i = (int) temp*10;
+	if (i<1||i>1000) return "Out of range";
+	return Level[i];
 }
 
 static char* read_file(const char* path) {
@@ -311,7 +307,7 @@ static void print_report(const Metrics* m) {
 }
 
 static void print_summary_report(const Metrics* m) {
-	printf("%s %.2f\n",m->filename, m->quality_temp_f);
+	printf("%s %.2f %s\n",m->filename, m->quality_temp_f, m->interpretation);
 }
 
 static bool has_supported_ext(const char* path) {
@@ -371,7 +367,7 @@ int main(int argc, char** argv) {
         printf("Usage: quality [file|directory|-] \n");
         return 1;
     }
-
+    initlevel();
     const char* target = argv[1];
 
     if (strcmp(target, "-") == 0) {
